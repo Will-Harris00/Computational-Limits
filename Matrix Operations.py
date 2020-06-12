@@ -32,15 +32,18 @@ def main():
     print(I2019)
     print("\n")
 
-    growth17_18 = growth(I2017, I2018, 2017, 2018)
-    print(growth17_18)
+    stats17_18 = stats(I2017, I2018, 2017, 2018)
+    print(stats17_18)
     print("\n")
-    growth18_19 = growth(I2018, I2019, 2018, 2019)
-    print(growth18_19)
+
+    stats18_19 = stats(I2018, I2019, 2018, 2019)
+    print(stats18_19)
     print("\n")
-    growth17_19 = growth(I2017, I2019, 2017, 2019)
-    print(growth17_19)
+
+    stats17_19 = stats(I2017, I2019, 2017, 2019)
+    print(stats17_19)
     print("\n")
+
 
 def quantity(year):
     file = "Q" + str(year) + ".text"
@@ -83,21 +86,31 @@ def individual_price(qty_matrix, cost_matrix):
     price_matrix = np.matrix(indv_price)
     return price_matrix
 
-def growth(previous, current, strt_year, end_year):
-    growth = []
+def stats(previous, current, strt_year, end_year):
+    stats_dict = {}
     prev_array = np.asarray(previous).reshape(-1)
     crnt_array = np.asarray(current).reshape(-1)
+    print("Here is the data relating to growth period "+ str(strt_year) + "-"+ str(end_year) + "\n")
     for i in range(1,5):
+        item = i + 1
         prev = prev_array[i]
-        crnt = crnt_array[i]
-        difference = crnt - prev
-        growth.append((difference / prev) * 100)
-        print("Percentage growth of item "+ str(i+1) +" starting at £" +
-              str(prev) + " and ending at £" + str(crnt) + " = " +
-              str(((difference / prev) * 100))
-              + "% for the year " + str(strt_year) + " to " + str(end_year))
-    return growth
-
+        actual = crnt_array[i]
+        expected = prev * (1.03 ** (end_year-strt_year))
+        real_diff = actual - expected
+        item_info = []
+        # Here we have a dictionary containing
+        # the actual price of the item in the previous year
+        # the actual price of the item in the current year
+        # the expected value of the item in the current year
+        # the difference between expected and actual price
+        # start year and end year of the time period statistics
+        # the item number is used as the key to access the dictionary values
+        item_info.extend([prev, actual, expected, real_diff, strt_year, end_year])
+        stats_dict.update({item: item_info})
+        print("Item "+ str(item) + ". Actual price = " + str(actual) +
+              ", Expected price = " + str(expected) + ", Difference = "
+              + str(real_diff))
+    return stats_dict
 
 if __name__ == '__main__':
     main()
