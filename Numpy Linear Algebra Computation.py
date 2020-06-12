@@ -50,7 +50,7 @@ def dataFrame(time_dict):
 
 def setup():
     nvalues = []
-    complete = True
+    not_complete = True
     while len(nvalues) == 0:
         nval = input("Input the values of n that you wish to measure: ")
         try:
@@ -60,21 +60,26 @@ def setup():
             print("\nPlease only enter integer numbers.")
             continue
     while len(nvalues) > 0:
+        nvalues.sort()
         print(nvalues)
         nval = input("Continue to add values or enter 'start' begin measurements: ")
         try:
             nval = int(nval)
-            nvalues.append(nval)
+            try:
+                nvalues.index(nval)
+                continue
+            except ValueError:
+                nvalues.append(nval)
         except ValueError:
             if nval == 'start':
                 break
-    while complete:
+    while not_complete:
         iterations = input("\nInput the number of iterations that you wish to measure: ")
         repeats = input("\nInput the number of repeats that you wish to measure: ")
         try:
             iterations = int(iterations)
             repeats = int(repeats)
-            complete = False
+            not_complete = False
         except ValueError:
             continue
     return nvalues, iterations, repeats
