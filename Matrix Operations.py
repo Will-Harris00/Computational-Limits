@@ -96,40 +96,49 @@ def individual_price(qty_matrix, cost_matrix):
     price_matrix = np.matrix(indv_price)
     return price_matrix
 
-def stats(previous, current, strt_year, end_year):
+def stats(old, new, strt_year, end_year):
     stats_dict = {}
-    prev_array = np.asarray(previous).reshape(-1)
-    crnt_array = np.asarray(current).reshape(-1)
+    old_array = np.asarray(old).reshape(-1)
+    new_array = np.asarray(new).reshape(-1)
     print("Here is the data relating to growth period "+ str(strt_year) + "-"+ str(end_year) + "\n")
     for i in range(1,5):
         item_info = []
-        prev = prev_array[i]
-        actual = crnt_array[i]
+        old = old_array[i]
+        new = new_array[i]
         item = i + 1
-        expected = prev * (1.03 ** (end_year-strt_year))
-        real_diff = actual - expected
-        page_diff = (real_diff / actual) * 100
+        expected = old * (1.03 ** (end_year-strt_year))
+        real_diff = new - expected
+        page_diff = (real_diff / new) * 100
         # Here we have a dictionary containing
-        # the actual price of the item in the current year
+        # the old price of the item in the previous year
+        # the new price of the item in the current year
         # the expected value of the item in the current year
         # the difference between expected and actual price
         # start year and end year of the time period statistics
         # the item number is used as the key to access the dictionary values
-        item_info.extend([actual, expected, real_diff, page_diff])
+        item_info.extend([round(old, 2), round(new, 2), round(expected, 2),
+                          round(real_diff, 2), round(page_diff, 2)])
         stats_dict.update({item: item_info})
-        print("Item "+ str(item) + ". Actual price = " + str(actual) +
-              ", Expected price = " + str(expected) + ", Difference = "
-              + str(real_diff) + ", Percentage difference = " + str(round(page_diff, 4)) +"%")
+        print("Item "+ str(item)
+              + ". Old price = "  + str(round(old, 2))
+              + ", New price = " +  str(round(new, 2))
+              + ", Expected price = " + str(round(expected, 2))
+              + ", Difference = " + str(round(real_diff, 2))
+              + ", Percentage difference = " + str(round(page_diff, 2)) +"%")
     return stats_dict
 
 def pandas(stats17_18, stats18_19, stats17_19):
     datafrm17_18 = pd.DataFrame.from_dict(stats17_18, orient='index',
-                          columns=['Actual Price', 'Expected Price', 'Difference', 'Percentage Difference'])
+                                          columns=['Old Price', 'New Price',
+                                                   'Expected Price', 'Difference',
+                                                   'Percentage Difference'])
     datafrm18_19 = pd.DataFrame.from_dict(stats18_19, orient='index',
-                                          columns=['Actual Price', 'Expected Price', 'Difference',
+                                          columns=['Old Price','New Price',
+                                                   'Expected Price', 'Difference',
                                                    'Percentage Difference'])
     datafrm17_19 = pd.DataFrame.from_dict(stats17_19, orient='index',
-                                          columns=['Actual Price', 'Expected Price', 'Difference',
+                                          columns=['Old Price','New Price',
+                                                   'Expected Price', 'Difference',
                                                    'Percentage Difference'])
     try:
         with ExcelWriter('stats.xlsx') as writer:
