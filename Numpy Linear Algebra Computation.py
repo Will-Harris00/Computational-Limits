@@ -4,10 +4,10 @@ import timeit as tm
 import matplotlib.pyplot as plt
 
 
-def main(nmax, iterations, repeats):
+def main(nlist, iterations, repeats):
     global j
     time_dict = {}
-    for n in range (1, nmax+1):
+    for n in nlist:
         j = n
         times_list = []
         for i in range (0, repeats):
@@ -48,9 +48,39 @@ def dataFrame(time_dict):
     plt.ylabel('Average Time (seconds)')
     plt.show()
 
+def setup():
+    nvalues = []
+    complete = True
+    while len(nvalues) == 0:
+        nval = input("Input the values of n that you wish to measure: ")
+        try:
+            nval = int(nval)
+            nvalues.append(nval)
+        except:
+            print("\nPlease only enter integer numbers.")
+            continue
+    while len(nvalues) > 0:
+        print(nvalues)
+        nval = input("Continue to add values or enter 'start' begin measurements: ")
+        try:
+            nval = int(nval)
+            nvalues.append(nval)
+        except ValueError:
+            if nval == 'start':
+                break
+    while complete:
+        iterations = input("\nInput the number of iterations that you wish to measure: ")
+        repeats = input("\nInput the number of repeats that you wish to measure: ")
+        try:
+            iterations = int(iterations)
+            repeats = int(repeats)
+            complete = False
+        except ValueError:
+            continue
+    return nvalues, iterations, repeats
+
+
 if __name__ == '__main__':
     j = 0
-    main(20, 9999, 5)
-    #times = time()
-    #avg = cal_average(times[0], times[1], times[2], times[3])
-    #curve(avg)
+    setup = setup()
+    main(setup[0], setup[1], setup[2])
