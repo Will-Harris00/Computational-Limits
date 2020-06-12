@@ -92,12 +92,13 @@ def stats(previous, current, strt_year, end_year):
     crnt_array = np.asarray(current).reshape(-1)
     print("Here is the data relating to growth period "+ str(strt_year) + "-"+ str(end_year) + "\n")
     for i in range(1,5):
-        item = i + 1
+        item_info = []
         prev = prev_array[i]
         actual = crnt_array[i]
+        item = i + 1
         expected = prev * (1.03 ** (end_year-strt_year))
         real_diff = actual - expected
-        item_info = []
+        page_diff = (real_diff / actual) * 100
         # Here we have a dictionary containing
         # the actual price of the item in the previous year
         # the actual price of the item in the current year
@@ -105,11 +106,11 @@ def stats(previous, current, strt_year, end_year):
         # the difference between expected and actual price
         # start year and end year of the time period statistics
         # the item number is used as the key to access the dictionary values
-        item_info.extend([prev, actual, expected, real_diff, strt_year, end_year])
+        item_info.extend([prev, actual, expected, real_diff, page_diff, strt_year, end_year])
         stats_dict.update({item: item_info})
         print("Item "+ str(item) + ". Actual price = " + str(actual) +
               ", Expected price = " + str(expected) + ", Difference = "
-              + str(real_diff))
+              + str(real_diff) + ", Percentage difference = " + str(round(page_diff, 4)) +"%")
     return stats_dict
 
 if __name__ == '__main__':
