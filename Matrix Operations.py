@@ -1,4 +1,6 @@
 import numpy as np
+import pandas as pd
+from pandas import ExcelWriter
 
 
 def main():
@@ -42,6 +44,14 @@ def main():
 
     stats17_19 = stats(I2017, I2019, 2017, 2019)
     print(stats17_19)
+    print("\n")
+
+    dataFrames = pandas(stats17_18, stats18_19, stats17_19)
+    print(dataFrames[0])
+    print("\n")
+    print(dataFrames[1])
+    print("\n")
+    print(dataFrames[2])
     print("\n")
 
 
@@ -100,18 +110,37 @@ def stats(previous, current, strt_year, end_year):
         real_diff = actual - expected
         page_diff = (real_diff / actual) * 100
         # Here we have a dictionary containing
-        # the actual price of the item in the previous year
         # the actual price of the item in the current year
         # the expected value of the item in the current year
         # the difference between expected and actual price
         # start year and end year of the time period statistics
         # the item number is used as the key to access the dictionary values
-        item_info.extend([prev, actual, expected, real_diff, page_diff, strt_year, end_year])
+        item_info.extend([actual, expected, real_diff, page_diff])
         stats_dict.update({item: item_info})
         print("Item "+ str(item) + ". Actual price = " + str(actual) +
               ", Expected price = " + str(expected) + ", Difference = "
               + str(real_diff) + ", Percentage difference = " + str(round(page_diff, 4)) +"%")
     return stats_dict
+
+def pandas(stats17_18, stats18_19, stats17_19):
+    datafrm17_18 = pd.DataFrame.from_dict(stats17_18, orient='index',
+                          columns=['Actual Price', 'Expected Price', 'Difference', 'Percentage Difference'])
+    datafrm18_19 = pd.DataFrame.from_dict(stats18_19, orient='index',
+                                          columns=['Actual Price', 'Expected Price', 'Difference',
+                                                   'Percentage Difference'])
+    datafrm17_19 = pd.DataFrame.from_dict(stats17_19, orient='index',
+                                          columns=['Actual Price', 'Expected Price', 'Difference',
+                                                   'Percentage Difference'])
+    try:
+        with ExcelWriter('stats.xlsx') as writer:
+            datafrm17_18.to_excel(writer, sheet_name='2017-2018')
+            datafrm18_19.to_excel(writer, sheet_name='2018-2019')
+            datafrm17_19.to_excel(writer, sheet_name='2017-2019')
+    # prevent errors from attempting to access excel file whilst it is open
+    # in another program and prevents overwriting if the file already exists
+    except PermissionError or FileExistsError:
+        pass
+    return datafrm17_18, datafrm18_19, datafrm17_19
 
 if __name__ == '__main__':
     main()
